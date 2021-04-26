@@ -51,7 +51,7 @@ En desarrollo
 
 ## Equipo 
 [![Gael Molina](https://avatars1.githubusercontent.com/u/79345679?v=4&s=144)](https://github.com/yoluisgael)  | [![Adrian Romo](https://avatars1.githubusercontent.com/u/17463208?v=4&s=144)](https://github.com/AdrianRomo)
----|---|---
+|---|---|
 [Gael Molina](https://github.com/yoluisgael)  | [Adrian Romo](https://github.com/AdrianRomo)
 
 ## [Licencia]()
