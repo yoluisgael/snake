@@ -2,33 +2,60 @@
 #include <stdlib.h>
 #include <time.h>
 #include <unistd.h>
-void draw(int, int);
+#include <termios.h>
 int *randomSetup(int, int);
+void draw(int tam, int snake, int *fruits);
 
 int main(int argc, char** argv) {
-  int tam, snake;
   sranddev();
-  printf("Inserte tamaño:");
+
+  int tam, snake, ch;
+  printf("Inserte tamaño: ");
+  //tam=getchar()-'0';
   scanf("%d", &tam);
-  while(1){
-    if(tam>3){
-      snake=tam/2; //Genera snake a la mitad del tablero
-      draw(tam, snake);
-      sleep(2);
-    }
+  if(tam<4){
+    tam=4;
   }
+  snake=tam/2; //Genera snake a la mitad del tablero
+  int *fruits;
+  fruits=randomSetup(tam, snake);
+
+  //Inicializa modo no canónico para la terminal
+  struct termios info;
+  tcgetattr(0, &info);
+  info.c_lflag &= ~ICANON;
+  info.c_cc[VMIN]=1;
+  info.c_cc[VTIME]=0;
+  tcsetattr(0, TCSANOW, &info);
+
+  while((ch=getchar())!=27){ 
+    if(ch<0){
+      if(ferror(stdin)){
+        clearerr(stdin);
+      }
+    }
+    printf("%d", ch);
+    if(ch==111){
+    fruits=randomSetup(tam, snake);
+    }
+    draw(tam, snake, fruits);
+    sleep(1);
+  }
+
+  tcgetattr(0, &info);
+  info.c_lflag |= ICANON;
+  tcsetattr(0, TCSANOW, &info);
   return 0;
 }
 
-void draw(tam, snake){
+void draw(int tam, int snake, int *fruits){
   /*
   Función para dibujar el tablero
   Entrada: Ninguna
   Salida: Tablero 
   */
   
-  int *fruits;
-  fruits=randomSetup(tam, snake);
+  printf("\n");
   for(int i = 0; i < tam; i++){ // Recorre toda la Altura
     for(int j =0; j < tam; j++){ // Recorre toda la Anchura
       if (i == 0 || i == tam-1 || j == 0 || j == tam-1){ // Checa si es la orilla
@@ -48,7 +75,6 @@ void draw(tam, snake){
   }
 }
 
-
 int *randomSetup(tam, snake){
   static int fruits[2];
   for(int i=0; i<2; i++){
@@ -59,7 +85,7 @@ int *randomSetup(tam, snake){
   do{
     fruits[0]=rand()%(tam-2)+1;
     fruits[1]=rand()%(tam-2)+1;
-    printf("fruit:%d %d\n", fruits[0], fruits[1]); //Imprime los valores de fruitx y fruity
+    printf("\nfruit:%d %d\n", fruits[0], fruits[1]); //Imprime los valores de fruitx y fruity
   } while (fruits[0]==snake && fruits[1]==snake);
 
   return fruits;
